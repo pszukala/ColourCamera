@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Gohan on 2015-10-19.
+ * Created by Pszukala on 2015-10-19.
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -97,7 +97,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             //this will happen when you are trying the camera if it's not running
         }
 
-        //now, recreate the camera preview
+        //recreate the camera preview
         try{
             Camera.Parameters params = mCamera.getParameters();
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
@@ -112,8 +112,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        //our app has only one screen, so we'll destroy the camera in the surface
-        //if you are unsing with more screens, please move this code your activity
         mCamera.stopPreview();
         mCamera.release();
     }

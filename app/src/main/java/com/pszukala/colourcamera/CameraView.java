@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Pszukala on 2015-10-19.
  */
-public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
+public class CameraView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -114,5 +114,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         mCamera.stopPreview();
         mCamera.release();
+    }
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+
     }
 }

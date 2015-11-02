@@ -36,8 +36,8 @@ public class MainActivity extends Activity {
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.exit(0);
                 mCamera.release();
+                System.exit(0);
             }
         });
     }

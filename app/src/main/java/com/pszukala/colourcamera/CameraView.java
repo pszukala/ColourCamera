@@ -2,16 +2,17 @@ package com.pszukala.colourcamera;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.graphics.*;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
  * Created by Gohan on 2015-10-19.
  */
-public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
+public class CameraView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -79,6 +80,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         try{
             //when the surface is created, we can set the camera to draw images in this surfaceholder
             mCamera.setPreviewDisplay(surfaceHolder);
+            mCamera.setPreviewCallback(this);
             mCamera.startPreview();
         } catch (IOException e) {
             Log.d("ERROR", "Camera error on surfaceCreated " + e.getMessage());
@@ -103,6 +105,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             mCamera.setParameters(params);
+            mCamera.setPreviewCallback(this);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {
@@ -116,5 +119,20 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         //if you are unsing with more screens, please move this code your activity
         mCamera.stopPreview();
         mCamera.release();
+    }
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        Camera.Parameters parameters = camera.getParameters();
+        int width = parameters.getPreviewSize().width;
+        int height = parameters.getPreviewSize().height;
+
+        YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+        byte[] bytes = out.toByteArray();
+        final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }

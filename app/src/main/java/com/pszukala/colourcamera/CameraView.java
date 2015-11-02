@@ -6,6 +6,8 @@ import android.graphics.*;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.ImageView;
+
 import java.io.*;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     private Camera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
+    private int crosshairSize;
 
     public CameraView(Context context, Camera camera){
         super(context);
@@ -30,6 +33,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
+    }
+
+    public void SetCrosshairSize(int size) {
+        crosshairSize = size;
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -123,16 +130,18 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        Camera.Parameters parameters = camera.getParameters();
-        int width = parameters.getPreviewSize().width;
-        int height = parameters.getPreviewSize().height;
+        if(crosshairSize > 0) {
+            Camera.Parameters parameters = camera.getParameters();
+            int width = parameters.getPreviewSize().width;
+            int height = parameters.getPreviewSize().height;
 
-        YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+            YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
 
-        byte[] bytes = out.toByteArray();
-        final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            byte[] bytes = out.toByteArray();
+            final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        }
     }
 }

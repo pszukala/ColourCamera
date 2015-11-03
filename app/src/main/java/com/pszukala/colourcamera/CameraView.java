@@ -128,9 +128,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-<<<<<<< HEAD
-
-=======
         if(crosshairSize > 0) {
             Camera.Parameters parameters = camera.getParameters();
             int width = parameters.getPreviewSize().width;
@@ -143,7 +140,26 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
             byte[] bytes = out.toByteArray();
             final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+            int redSum = 0;
+            int greenSum = 0;
+            int blueSum = 0;
+            int pixelCount = 0;
+
+            for(int x = (width/2 - crosshairSize/2); x < (width/2 + crosshairSize/2); x++){
+                for(int y = (height/2 - crosshairSize/2); y < (height/2 + crosshairSize/2); y++){
+                    pixelCount++;
+                    int pixel = bitmap.getPixel(x, y);
+                    redSum += Color.red(pixel);
+                    greenSum += Color.green(pixel);
+                    blueSum += Color.blue(pixel);
+                }
+            }
+
+            int avgRed = redSum/pixelCount;
+            int avgGreen = greenSum/pixelCount;
+            int avgBlue = blueSum/pixelCount;
+            int x = bitmap.getPixel(1, 1);
         }
->>>>>>> origin/master
     }
 }

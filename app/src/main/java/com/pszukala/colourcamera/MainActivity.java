@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
@@ -36,9 +37,15 @@ public class MainActivity extends Activity {
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.exit(0);
                 mCamera.release();
+                System.exit(0);
             }
         });
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus){
+        int crosshairSize = findViewById(R.id.crosshair).getHeight();
+        mCameraView.SetCrosshairSize(crosshairSize);
     }
 }

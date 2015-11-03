@@ -2,10 +2,13 @@ package com.pszukala.colourcamera;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.graphics.*;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
+import android.widget.ImageView;
+
+import java.io.*;
 import java.util.List;
 
 /**
@@ -17,6 +20,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     private Camera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
+    private int crosshairSize;
 
     public CameraView(Context context, Camera camera){
         super(context);
@@ -29,6 +33,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
+    }
+
+    public void SetCrosshairSize(int size) {
+        crosshairSize = size;
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -79,6 +87,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         try{
             //when the surface is created, we can set the camera to draw images in this surfaceholder
             mCamera.setPreviewDisplay(surfaceHolder);
+            mCamera.setPreviewCallback(this);
             mCamera.startPreview();
         } catch (IOException e) {
             Log.d("ERROR", "Camera error on surfaceCreated " + e.getMessage());
@@ -103,6 +112,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
             params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             mCamera.setParameters(params);
+            mCamera.setPreviewCallback(this);
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {
@@ -118,6 +128,22 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+<<<<<<< HEAD
 
+=======
+        if(crosshairSize > 0) {
+            Camera.Parameters parameters = camera.getParameters();
+            int width = parameters.getPreviewSize().width;
+            int height = parameters.getPreviewSize().height;
+
+            YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+            byte[] bytes = out.toByteArray();
+            final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        }
+>>>>>>> origin/master
     }
 }

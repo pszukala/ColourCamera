@@ -5,3 +5,10 @@
 .DS_Store
 /build
 /captures
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/vcs.xml
+app/app.iml
+.idea/compiler.xml
+.idea/encodings.xml

@@ -21,5 +21,14 @@
         android:background="@android:drawable/ic_menu_close_clear_cancel"
         android:padding="20dp"/>
 
+<<<<<<< HEAD
+=======
+    <ImageView
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:id="@+id/crosshair"
+        android:src="@drawable/crosshair"
+        android:layout_gravity="center" />
+>>>>>>> origin/master
 
 </FrameLayout>

@@ -28,5 +28,42 @@
         android:src="@drawable/crosshair"
         android:layout_gravity="center" />
 
+    <ImageView
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:id="@+id/colorBox"
+        android:layout_gravity="left|bottom"
+        android:background="#ffffff"
+        android:adjustViewBounds="false"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/rgbText"
+        android:layout_gravity="bottom|right"
+        android:textColor="#ffffff"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="8" />
+
+    <TextView
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/rgbName"
+        android:layout_gravity="bottom|right"
+        android:textColor="#ffffff"
+        android:padding="2dp"
+        android:shadowColor="#000000"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="8"
+        android:layout_marginBottom="60dp" />
+
 
 </FrameLayout>

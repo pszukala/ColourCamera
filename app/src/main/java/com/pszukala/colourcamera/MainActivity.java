@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -46,6 +47,9 @@ public class MainActivity extends Activity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus){
         int crosshairSize = findViewById(R.id.crosshair).getHeight();
-        mCameraView.SetCrosshairSize(crosshairSize);
+        ImageView box = (ImageView) findViewById(R.id.colorBox);
+        TextView rgbTxt = (TextView) findViewById(R.id.rgbText);
+        TextView nameTxt = (TextView) findViewById(R.id.rgbName);
+        mCameraView.init(crosshairSize, box, rgbTxt, nameTxt);
     }
 }

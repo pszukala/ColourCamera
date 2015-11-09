@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.*;
 import java.util.List;
@@ -17,10 +19,13 @@ import java.util.List;
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private SurfaceHolder mHolder;
+    private ImageView colorBox;
+    private TextView rgbText, rgbName;
     private Camera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
-    private int crosshairSize;
+    private int crosshairSize = 0;
+    private RGBtoColourName rgbToName;
 
     public CameraView(Context context, Camera camera){
         super(context);
@@ -33,10 +38,14 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
+        rgbToName = new RGBtoColourName();
     }
 
-    public void SetCrosshairSize(int size) {
+    public void init(int size, ImageView box, TextView rgbTxt, TextView nameTxt) {
         crosshairSize = size;
+        colorBox = box;
+        rgbText = rgbTxt;
+        rgbName = nameTxt;
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -159,7 +168,13 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
             int avgRed = redSum/pixelCount;
             int avgGreen = greenSum/pixelCount;
             int avgBlue = blueSum/pixelCount;
-            int x = bitmap.getPixel(1, 1);
+
+            String text = "R: " + avgRed + " G: " + avgGreen + " B: " + avgBlue;
+            String cName = rgbToName.getColourNameFromRgb( avgRed, avgGreen, avgBlue);
+
+            colorBox.setBackgroundColor(Color.rgb(avgRed, avgGreen, avgBlue));
+            rgbText.setText(text);
+            rgbName.setText(cName);
         }
     }
 }

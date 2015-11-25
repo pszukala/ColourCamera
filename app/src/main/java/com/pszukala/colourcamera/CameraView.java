@@ -30,15 +30,20 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     public CameraView(Context context, Camera camera){
         super(context);
 
-        mCamera = camera;
-        mCamera.setDisplayOrientation(90);
-
-        mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
-        //get the holder and set this class as the callback, so we can get camera data here
+        setCamera(camera);
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
-        rgbToName = new RGBtoColourName();
+        rgbToName = new RGBtoColourName(context);
+    }
+
+    public void setCamera(Camera camera)
+    {
+        mCamera = camera;
+        if (mCamera != null){
+            mCamera.setDisplayOrientation(90);
+            mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
+        }
     }
 
     public void init(int size, ImageView box, TextView rgbTxt, TextView nameTxt) {
@@ -94,10 +99,12 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         try{
-            //when the surface is created, we can set the camera to draw images in this surfaceholder
-            mCamera.setPreviewDisplay(surfaceHolder);
-            mCamera.setPreviewCallback(this);
-            mCamera.startPreview();
+            if(mCamera != null) {
+                //when the surface is created, we can set the camera to draw images in this surfaceholder
+                mCamera.setPreviewDisplay(surfaceHolder);
+                mCamera.setPreviewCallback(this);
+                mCamera.startPreview();
+            }
         } catch (IOException e) {
             Log.d("ERROR", "Camera error on surfaceCreated " + e.getMessage());
         }
@@ -110,20 +117,24 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
             return;
 
         try{
-            mCamera.stopPreview();
+            if(mCamera != null) {
+                mCamera.stopPreview();
+            }
         } catch (Exception e){
             //this will happen when you are trying the camera if it's not running
         }
 
         //recreate the camera preview
         try{
-            Camera.Parameters params = mCamera.getParameters();
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-            params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-            mCamera.setParameters(params);
-            mCamera.setPreviewCallback(this);
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
+            if(mCamera != null) {
+                Camera.Parameters params = mCamera.getParameters();
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                params.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
+                mCamera.setParameters(params);
+                mCamera.setPreviewCallback(this);
+                mCamera.setPreviewDisplay(mHolder);
+                mCamera.startPreview();
+            }
         } catch (IOException e) {
             Log.d("ERROR", "Camera error on surfaceChanged " + e.getMessage());
         }
@@ -131,8 +142,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        mCamera.stopPreview();
-        mCamera.release();
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
     }
 
     @Override

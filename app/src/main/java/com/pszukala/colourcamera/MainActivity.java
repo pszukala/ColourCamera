@@ -1,8 +1,14 @@
 package com.pszukala.colourcamera;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.hardware.Camera;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,8 +29,8 @@ public class MainActivity extends Activity {
         cameraInit();
 
         //btn to close the application
-        ImageButton imgClose = (ImageButton) findViewById(R.id.imgClose);
-        imgClose.setOnClickListener(new View.OnClickListener() {
+        ImageButton closeButton = (ImageButton) findViewById(R.id.closeBtn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCamera.stopPreview();
@@ -37,6 +43,29 @@ public class MainActivity extends Activity {
                 System.exit(0);
             }
         });
+
+        ImageButton menuButton = (ImageButton) findViewById(R.id.menuBtn);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), MenuActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Exit?")
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        MainActivity.super.onBackPressed();
+                    }
+                }).create().show();
     }
 
     public void cameraInit()

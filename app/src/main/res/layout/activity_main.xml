@@ -11,15 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|bottom">
+
+        </LinearLayout>
+
     </FrameLayout>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgClose"
+        android:id="@+id/closeBtn"
         android:layout_gravity="right|top"
         android:background="@android:drawable/ic_menu_close_clear_cancel"
-        android:padding="20dp"/>
+        android:padding="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp" />
 
     <ImageView
         android:layout_height="50dp"
@@ -29,18 +39,18 @@
         android:layout_gravity="center" />
 
     <ImageView
-        android:layout_height="100dp"
-        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
         android:id="@+id/colorBox"
         android:layout_gravity="left|bottom"
         android:background="#ffffff"
         android:adjustViewBounds="false"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"/>
 
     <TextView
         android:layout_width="170dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/rgbText"
         android:layout_gravity="bottom|right"
@@ -49,11 +59,13 @@
         android:shadowColor="#000000"
         android:shadowDx="0"
         android:shadowDy="0"
-        android:shadowRadius="8" />
+        android:shadowRadius="8"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="15dp" />
 
     <TextView
         android:layout_width="170dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/rgbName"
         android:layout_gravity="bottom|right"
@@ -63,7 +75,17 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="8"
-        android:layout_marginBottom="60dp" />
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="50dp" />
+
+    <ImageButton
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:id="@+id/menuBtn"
+        android:background="@android:drawable/ic_menu_more"
+        android:layout_gravity="top|left"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp" />
 
 
 </FrameLayout>

@@ -33,14 +33,7 @@ public class MainActivity extends Activity {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCamera.stopPreview();
-                mCameraView.setCamera(null);
-                mCamera.release();
-                camera_view.removeAllViews();
-                camera_view = null;
-                mCamera = null;
-                mCameraView = null;
-                System.exit(0);
+                finish();
             }
         });
 
@@ -50,6 +43,7 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), MenuActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -64,6 +58,7 @@ public class MainActivity extends Activity {
 
                     public void onClick(DialogInterface arg0, int arg1) {
                         MainActivity.super.onBackPressed();
+                        finish();
                     }
                 }).create().show();
     }
@@ -107,6 +102,7 @@ public class MainActivity extends Activity {
             camera_view = null;
             mCamera = null;
             mCameraView = null;
+            finish();
             System.exit(0);
         }
     }

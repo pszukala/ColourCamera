@@ -5,7 +5,18 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.pszukala.colourcamera.MenuActivity"
-    android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+    tools:context="com.pszukala.colourcamera.SelectDbActivity"
+    android:background="#000000"
+    android:theme="@android:style/Theme.WithActionBar"
+    android:descendantFocusability="blocksDescendants">
+
+    <ListView
+        android:id="@+id/list_view"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="15dp"
+        android:longClickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </ListView>
 
 </RelativeLayout>

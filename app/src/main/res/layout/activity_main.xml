@@ -4,20 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#000000">
 
     <FrameLayout
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|bottom">
-
-        </LinearLayout>
+        android:layout_height="match_parent"
+        android:background="#000000">
 
     </FrameLayout>
 
@@ -39,14 +33,24 @@
         android:layout_gravity="center" />
 
     <ImageView
+        android:layout_height="84dp"
+        android:layout_width="84dp"
+        android:id="@+id/colorBoxFrame"
+        android:layout_gravity="left|bottom"
+        android:background="#ffffff"
+        android:adjustViewBounds="false"
+        android:layout_marginLeft="18dp"
+        android:layout_marginBottom="18dp" />
+
+    <ImageView
         android:layout_height="80dp"
         android:layout_width="80dp"
         android:id="@+id/colorBox"
         android:layout_gravity="left|bottom"
-        android:background="#ffffff"
+        android:background="#000000"
         android:adjustViewBounds="false"
         android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="170dp"

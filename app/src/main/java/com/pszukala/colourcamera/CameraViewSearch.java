@@ -6,37 +6,40 @@ import android.graphics.*;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Pszukala on 2015-10-19.
  */
-public class CameraView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
+public class CameraViewSearch extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private SurfaceHolder mHolder;
-    private ImageView colorBox;
-    private TextView rgbText, rgbName;
     private Camera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
-    private int crosshairSize = 0;
-    private RGBtoColourName rgbToName;
+    private ColourWithName searchedColour;
+    private int allowedMSE = 15;
+    private int pixelDistance = 4;
+    private ImageView searchCrosshair;
+    private int searchDistance;
+    private int crosshairSize;
     private int frameSkip = 0;
 
-    public CameraView(Context context, Camera camera){
+    public CameraViewSearch(Context context, Camera camera, ColourWithName sColour){
         super(context);
 
         setCamera(camera);
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
-        rgbToName = new RGBtoColourName(context);
-        rgbToName.initColorList();
+
+        searchedColour = sColour;
     }
 
     public void setCamera(Camera camera)
@@ -48,11 +51,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         }
     }
 
-    public void init(int size, ImageView box, TextView rgbTxt, TextView nameTxt) {
-        crosshairSize = size;
-        colorBox = box;
-        rgbText = rgbTxt;
-        rgbName = nameTxt;
+    public void init(ImageView searchCrosshair)
+    {
+        this.searchCrosshair = searchCrosshair;
+        crosshairSize = searchCrosshair.getHeight();
+        searchDistance = (int) (crosshairSize/(pixelDistance*2));
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -152,12 +155,17 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         frameSkip++;
-        if (frameSkip == 5) {
+        if(frameSkip == 5) {
             frameSkip = 0;
-            if (crosshairSize > 0) {
+            if (searchCrosshair != null) {
                 Camera.Parameters parameters = camera.getParameters();
                 int width = parameters.getPreviewSize().width;
                 int height = parameters.getPreviewSize().height;
+
+                int listWidth = width / pixelDistance;
+                int listHeight = height / pixelDistance;
+
+                Point[][] matchedPixels = new Point[listWidth][listHeight];
 
                 YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
 
@@ -167,32 +175,73 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
                 byte[] bytes = out.toByteArray();
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                int redSum = 0;
-                int greenSum = 0;
-                int blueSum = 0;
-                int pixelCount = 0;
-
-                for (int x = (width / 2 - crosshairSize / 2); x < (width / 2 + crosshairSize / 2); x++) {
-                    for (int y = (height / 2 - crosshairSize / 2); y < (height / 2 + crosshairSize / 2); y++) {
-                        pixelCount++;
+                int xIt = 0;
+                int yIt = 0;
+                for (int x = pixelDistance * 4; x < (width - width / 20); x += pixelDistance) {
+                    for (int y = pixelDistance * 4; y < (height - height / 20); y += pixelDistance) {
                         int pixel = bitmap.getPixel(x, y);
-                        redSum += Color.red(pixel);
-                        greenSum += Color.green(pixel);
-                        blueSum += Color.blue(pixel);
+                        if ((searchedColour.redMSE(Color.red(pixel)) < allowedMSE) &&
+                                (searchedColour.greenMSE(Color.green(pixel)) < allowedMSE) &&
+                                (searchedColour.blueMSE(Color.blue(pixel)) < allowedMSE)) {
+                            matchedPixels[xIt][yIt] = new Point(x, y, searchedColour.computeMSE(Color.red(pixel), Color.green(pixel), Color.blue(pixel)));
+                        }
+                        yIt++;
+                    }
+                    xIt++;
+                    yIt = 0;
+                }
+
+                Point matchedPixel = null;
+                int minNeighbours = searchDistance*2;
+                int minMSE = allowedMSE;
+
+                for (int x = searchDistance; x < (listWidth - searchDistance); x++) {
+                    for (int y = searchDistance; y < (listHeight - searchDistance); y++) {
+                        if (matchedPixels[x][y] != null) {
+                            int neighbours = numberOfNeighbours(x, y, matchedPixels);
+                            if (neighbours > minNeighbours) {
+                                minNeighbours = neighbours;
+                                matchedPixel = matchedPixels[x][y];
+                            }
+                            else if (neighbours == minNeighbours && minMSE > matchedPixels[x][y].MSE){
+                                minMSE = matchedPixels[x][y].MSE;
+                                matchedPixel = matchedPixels[x][y];
+                            }
+                        }
                     }
                 }
 
-                int avgRed = redSum / pixelCount;
-                int avgGreen = greenSum / pixelCount;
-                int avgBlue = blueSum / pixelCount;
-
-                String text = "R: " + avgRed + " G: " + avgGreen + " B: " + avgBlue;
-                String cName = rgbToName.getColourNameFromRgb(avgRed, avgGreen, avgBlue);
-
-                colorBox.setBackgroundColor(Color.rgb(avgRed, avgGreen, avgBlue));
-                rgbText.setText(text);
-                rgbName.setText(cName);
+                if (matchedPixel != null) {
+                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) searchCrosshair.getLayoutParams();
+                    lp.rightMargin = matchedPixel.y - crosshairSize / 2;
+                    lp.topMargin = matchedPixel.x - crosshairSize / 2;
+                    searchCrosshair.setVisibility(View.VISIBLE);
+                    requestLayout();
+                } else {
+                    searchCrosshair.setVisibility(View.INVISIBLE);
+                }
             }
         }
+    }
+
+    public int numberOfNeighbours(int x, int y, Point[][] matchedPixels){
+        int count = 0;
+
+        for(int it=-searchDistance; it<searchDistance; it++){
+
+            if(matchedPixels[x+it][y] != null)
+                count++;
+
+            if(matchedPixels[x][y+it] != null)
+                count++;
+
+            if(matchedPixels[x+it][y+it] != null)
+                count++;
+
+            if(matchedPixels[x-it][y+it] != null)
+                count++;
+        }
+
+        return count;
     }
 }

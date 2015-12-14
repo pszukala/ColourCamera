@@ -1,14 +1,13 @@
 package com.pszukala.colourcamera;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+
 
 public class MenuActivity extends Activity {
 
@@ -17,12 +16,31 @@ public class MenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Button colourByNameButton = (Button) findViewById(R.id.ColourByNameBtn);
+        colourByNameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               Intent intent = new Intent(view.getContext(), ShowColourByNameActivity.class);
+               startActivity(intent);
+                finish();
+            }
+       });
+
+       Button selectDbButton = (Button) findViewById(R.id.SelectDbBtn);
+       selectDbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), SelectDbActivity.class);
+                startActivity(intent);
+                finish();
+          }
+       });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);

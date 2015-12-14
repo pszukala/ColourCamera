@@ -17,17 +17,16 @@ import java.util.List;
  */
 public class RGBtoColourName {
 
-    private List<ColourWithName> colorList = null;
+    private List<ColourWithName> colourList = null;
     private Context ctx;
     SharedPreferences sharedpreferences;
 
     public RGBtoColourName(Context ctx){
         this.ctx = ctx;
         this.sharedpreferences = ctx.getSharedPreferences("MyPrefs", ctx.MODE_PRIVATE);
-        colorList = initColorList();
     }
 
-    private List<ColourWithName> initColorList() {
+    public void initColorList() {
 
         Gson gson = new Gson();
 
@@ -36,16 +35,15 @@ public class RGBtoColourName {
 
         String json = loadSharedPref();
 
-        List<ColourWithName> colorList = new Gson().fromJson(json, listType);
+        colourList = gson.fromJson(json, listType);
 
-        return colorList;
     }
 
     public String getColourNameFromRgb(int r, int g, int b) {
         ColourWithName closestMatch = null;
         int minMSE = Integer.MAX_VALUE;
         int mse;
-        for (ColourWithName c : colorList) {
+        for (ColourWithName c : colourList) {
             mse = c.computeMSE(r, g, b);
             if (mse < minMSE) {
                 minMSE = mse;
@@ -54,7 +52,7 @@ public class RGBtoColourName {
         }
 
         if (closestMatch != null) {
-            return closestMatch.getName();
+            return closestMatch.Name;
         } else {
             return "No matched color name.";
         }
@@ -103,5 +101,9 @@ public class RGBtoColourName {
             saveSharedPref(loadJSONFromResource());
             return sharedpreferences.getString("colourList", "");
         }
+    }
+
+    public List<ColourWithName> getColourList(){
+        return colourList;
     }
 }
